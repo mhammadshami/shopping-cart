@@ -1,57 +1,43 @@
-import { useSelector, useDispatch } from "react-redux";
-import CheckOut from "./components/CheckOut";
-import Navbar from "./components/Navbar";
-import ShoppingContainer from "./components/ShoppingContainer";
-import { useEffect } from "react";
-import { total } from "./components/State/Slice/CartSlice";
+import React from "react";
 import {
-  Outlet,
-  Route,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
-import ItemDetails from "./components/ItemDetails";
-
-const Layout = () => {
-  const { isOpen } = useSelector((state) => state.checkout);
-
-  return (
-    <div>
-      <Navbar />
-      {isOpen && <CheckOut />}
-      <Outlet />
-    </div>
-  );
-};
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Layout />,
-    children: [
-      {
-        path: "/",
-        element: <ShoppingContainer />,
-      },
-      {
-        path: "/ItemDetails/:id",
-        element: <ItemDetails />,
-      },
-    ],
-  },
-]);
+  Home,
+  Cart,
+  CategoryProduct,
+  ProductSingle,
+  Search,
+} from "./pages/index";
+// components
+import Header from "./components/Header/Header";
+import Sidebar from "./components/Sidebar/Sidebar";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import store from "./store/store";
+import Footer from "./components/Footer/Footer";
+import { Provider } from "react-redux";
 
 const App = () => {
-  const { cartItems } = useSelector((state) => state.cart);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(total());
-  }, [cartItems]);
-
   return (
-    <div>
-      <RouterProvider router={router}></RouterProvider>
+    <div className="App">
+      <Provider store={store}>
+        {" "}
+        <BrowserRouter>
+          <Header />
+          <Sidebar />
+          <Routes>
+            {/* home page route */}
+            <Route path="" element={<Home />} />
+            {/* single product route */}
+            <Route path="/product/:id" element={<ProductSingle />} />
+            {/* category wise product listing route */}
+            <Route path="/category/:category" element={<CategoryProduct />} />
+            {/* cart */}
+            <Route path="/cart" element={<Cart />} />
+            {/* searched products */}
+            <Route path="/search/:searchTerm" element={<Search />} />
+          </Routes>
+
+          <Footer />
+        </BrowserRouter>
+      </Provider>
     </div>
   );
 };
